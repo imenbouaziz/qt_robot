@@ -3,23 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Face Expression</title>
+    <title>Maths & Face Expression</title>
     <script>
+        // Fonction pour changer l'expression du visage du robot
         function changeFace(expression) {
             let face = document.getElementById("face");
             if (expression === 'happy') {
                 face.innerHTML = "<div class='eyes'></div><div class='eyes'></div><div class='mouth happy'></div>";
+                speak("Bravo !");
             } else if (expression === 'sad') {
                 face.innerHTML = "<div class='eyes'></div><div class='eyes'></div><div class='mouth sad'></div>";
+                speak("Réessayer encore !");
             } else if (expression === 'angry') {
                 face.innerHTML = "<div class='eyes angry'></div><div class='eyes angry'></div><div class='mouth angry'></div>";
+                speak("Pourquoi es-tu en colère ?");
             }
+        }
+
+        // Fonction pour faire parler le robot
+        function speak(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(msg);
+        }
+
+        // Fonction pour générer un problème mathématique basé sur l'opération
+        function generateProblem(operation) {
+            let num1 = Math.floor(Math.random() * 10) + 1;
+            let num2 = Math.floor(Math.random() * 10) + 1;
+            let result;
+
+            if (operation === 'addition') {
+                result = num1 + num2;
+                document.getElementById("problem").innerHTML = num1 + " + " + num2;
+            } else if (operation === 'soustraction') {
+                result = num1 - num2;
+                document.getElementById("problem").innerHTML = num1 + " - " + num2;
+            } else if (operation === 'multiplication') {
+                result = num1 * num2;
+                document.getElementById("problem").innerHTML = num1 + " * " + num2;
+            }
+
+            // Stocker la réponse correcte dans un champ caché
+            document.getElementById("correctAnswer").value = result;
+        }
+
+        // Vérification de la réponse de l'utilisateur
+        function checkAnswer() {
+            let userAnswer = document.getElementById("userAnswer").value;
+            let correctAnswer = document.getElementById("correctAnswer").value;
+
+            if (userAnswer == correctAnswer) {
+                changeFace('happy');
+            } else {
+                changeFace('sad');
+            }
+
+            // Réinitialiser pour une nouvelle question
+            document.getElementById("userAnswer").value = "";
+            setTimeout(generateProblem, 2000, document.getElementById("operation").value);
         }
     </script>
     <style>
         body {
-            text-align: center;
             font-family: Arial, sans-serif;
+            text-align: center;
         }
         #face {
             width: 200px;
@@ -86,18 +133,42 @@
             margin: 10px;
             padding: 10px;
         }
+        #problem {
+            font-size: 30px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <h1>Face Expression</h1>
+    <h1>Maths pour Enfants - Robot</h1>
     <div id="face">
         <div class="eyes"></div>
         <div class="eyes"></div>
         <div class="mouth happy"></div>
     </div>
-    <br>
-    <button onclick="changeFace('happy')">Happy</button>
-    <button onclick="changeFace('sad')">Sad</button>
-    <button onclick="changeFace('angry')">Angry</button>
+    <br><br>
+
+    <div id="menu">
+        <label for="operation">Choisissez une opération :</label>
+        <select id="operation" onchange="generateProblem(this.value)">
+            <option value="addition">Addition</option>
+            <option value="soustraction">Soustraction</option>
+            <option value="multiplication">Multiplication</option>
+        </select>
+    </div>
+
+    <div id="problem"></div>
+    <input type="number" id="userAnswer" placeholder="Votre réponse">
+    <button onclick="checkAnswer()">Répondre</button>
+
+    <input type="hidden" id="correctAnswer">
+
+    <script>
+        // Générer un problème au chargement initial
+        window.onload = function() {
+            generateProblem('addition');
+        };
+    </script>
+
 </body>
 </html>
