@@ -35,10 +35,10 @@
 
         /* Tête de robot */
         #robot-face {
-            width: 200px;
-            height: 200px;
-            background: #6b36be;
-            border-radius: 50%;
+            width: 240px;
+            height: 180px;
+            background: #8ba5ff;
+            border-radius: 15px;
             border: 5px solid #333;
             position: relative;
             margin: 20px auto;
@@ -46,32 +46,60 @@
             animation: float 3s ease-in-out infinite;
         }
 
+        /* Antennes du robot */
+        .robot-antenna {
+            width: 8px;
+            height: 20px;
+            background: #333;
+            position: absolute;
+            top: -20px;
+        }
+
+        .robot-antenna.left {
+            left: 50px;
+        }
+
+        .robot-antenna.right {
+            right: 50px;
+        }
+
+        .robot-antenna::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: #ff6f61;
+            border-radius: 50%;
+            position: absolute;
+            top: -6px;
+            left: -2px;
+        }
+
         /* Yeux du robot */
         .robot-eye {
-            width: 40px;
-            height: 40px;
+            width: 60px;
+            height: 60px;
             background: white;
             border-radius: 50%;
             position: absolute;
-            top: 50px;
-            border: 3px solid #333;
-            animation: blink 2s infinite;
+            top: 40px;
+            border: 4px solid #333;
+            animation: blink 2.5s infinite;
         }
 
         .robot-eye.left {
-            left: 30px;
+            left: 40px;
         }
 
         .robot-eye.right {
-            right: 30px;
+            right: 40px;
         }
 
         /* Pupilles */
         .robot-eye::after {
             content: '';
-            width: 20px;
-            height: 20px;
-            background: #6a7fdf;
+            width: 30px;
+            height: 30px;
+            background: #000;
             border-radius: 50%;
             position: absolute;
             top: 50%;
@@ -79,16 +107,29 @@
             transform: translate(-50%, -50%);
         }
 
+        /* Reflet dans les yeux */
+        .robot-eye::before {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            z-index: 2;
+        }
+
         /* Bouche du robot */
         .robot-mouth {
             width: 80px;
-            height: 20px;
+            height: 15px;
             background: #333;
             position: absolute;
             bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            border-radius: 10px;
+            border-radius: 15px;
             transition: all 0.3s ease;
         }
 
@@ -96,7 +137,7 @@
             width: 100px;
             height: 40px;
             border-radius: 0 0 50px 50px;
-            background: #c92819;
+            background: #ff6f61;
         }
 
         .robot-mouth.sad {
@@ -126,8 +167,8 @@
         }
 
         @keyframes blink {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(0.1); }
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
         }
 
         /* Boutons et inputs */
@@ -219,6 +260,8 @@
     <!-- Section du robot -->
     <div class="section">
         <div id="robot-face">
+            <div class="robot-antenna left"></div>
+            <div class="robot-antenna right"></div>
             <div class="robot-eye left"></div>
             <div class="robot-eye right"></div>
             <div class="robot-mouth happy"></div>
