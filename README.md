@@ -2,17 +2,19 @@
 
 Bienvenue sur le projet **Maths pour Enfants**, une application web ludique où un robot 3D pose des questions de calcul aux enfants, et réagit avec des expressions et des animations !
 
+## 🚀 Lancer l'application depuis internet
+
 🔗 **Accéder à l'application en ligne :**  
-👉 [https://site.com](https://qt-robot.onrender.com/)
+👉 [LIEN DE L'APPLICATION](https://qt-robot.onrender.com/)
 
 ---
 
 ## 🚀 Lancer l'application en local
 
-### ✅ Étapes simples (pour tout le monde)
+### ✅ Étapes
 
 1. **Installer Python**  
-   Si ce n’est pas déjà fait, installez [Python](https://www.python.org/downloads/).
+   Si ce n’est pas déjà fait, installez [Python Windows](https://www.python.org/downloads/windows/).
 
 2. **Télécharger le projet**  
    Cliquez sur **"Code" > "Download ZIP"** sur cette page GitHub.  
