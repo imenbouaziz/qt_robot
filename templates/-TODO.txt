@@ -1,0 +1,9 @@
+-Voix robot
+-Design finale
+-Reaction Deepseek
+
+(
+-Integration QT 3D fond transparent
+-QT animation
+-QT Expression
+)
