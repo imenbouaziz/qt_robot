@@ -7,6 +7,7 @@ Bienvenue sur le projet **Maths pour Enfants**, une application web ludique où 
 🔗 **Accéder à l'application en ligne :**  
 👉 [LIEN DE L'APPLICATION](https://qt-robot.onrender.com/)
 
+Le premier chargement de la page peut être assez lent. Attendez au moins une minute avant de recharger la page.
 ---
 
 ## 🚀 Lancer l'application en local
