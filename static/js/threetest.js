@@ -6,6 +6,7 @@ let mixer;
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 let headMesh = null;
+const qtScale = 2.7;
 
 function init() {
   // Créer la scène
@@ -53,9 +54,10 @@ function init() {
       const center = box.getCenter(new THREE.Vector3());
 
       model.position.sub(center);
-      model.position.y -= 5; // Descendre le modèle
-      model.position.x -= 10;
-      model.scale.set(3, 3, 3);
+      model.position.y -= 4.8; // Descendre le modèle
+      model.position.x -= 9.5;
+      model.rotateY(-50);
+      model.scale.set(qtScale,qtScale,qtScale);
 
       // Caméra auto-adaptée
       const maxDim = Math.max(size.x, size.y, size.z);
@@ -76,10 +78,8 @@ function init() {
       mixer = new THREE.AnimationMixer(model);
       mixer._clips = gltf.animations; // 🔁 on garde les clips pour findByName
 
-      playAnimation("Sad_Baked");
+      playAnimation("Wave_Baked","HappySmile");
 
-      // Expression par défaut
-      setExpression("Neutral");
     },
     undefined,
     (error) => {
@@ -91,8 +91,17 @@ function init() {
 }
 
 let currentAction = null;
+let isInAnimation = false;
+function playAnimation(name, expressionName = null) {
+  if (name != "Idle_Baked" && isInAnimation){
+    return;
+  }
 
-function playAnimation(name) {
+  // 🎭 Expression liée
+  if (expressionName) {
+    setExpression(expressionName);
+  }
+
   if (!mixer || !model) {
     console.warn("⏯️ Mixer ou modèle non prêt");
     return;
@@ -106,15 +115,39 @@ function playAnimation(name) {
 
   const newAction = mixer.clipAction(clip);
 
-  if (currentAction) {
+  // 🌀 Si c'est Idle, on le boucle
+  if (name === "Idle_Baked") {
+    newAction.setLoop(THREE.LoopRepeat);
+    newAction.clampWhenFinished = false;
+  } else {
+    isInAnimation = true;
+    newAction.setLoop(THREE.LoopOnce);
+    newAction.clampWhenFinished = true;
+  }
+
+  if (currentAction && currentAction !== newAction) {
     currentAction.fadeOut(0.3);
   }
 
   newAction.reset().fadeIn(0.3).play();
   currentAction = newAction;
+  
+  
 
-  console.log(`🎬 Animation '${name}' lancée.`);
+  // 💤 Revenir à Idle après anim SANS re-boucler Idle
+  if (name !== "Idle_Baked") {
+    mixer.addEventListener("finished", function onFinish() {
+      mixer.removeEventListener("finished", onFinish);
+      isInAnimation = false;
+      playAnimation("Idle_Baked", "Eager");
+    });
+  }
+
+  console.log(`🎬 Animation '${name}' lancée avec expression '${expressionName || 'aucune'}'`);
 }
+
+
+
 
 
 // Fonction pour changer l'expression du visage
