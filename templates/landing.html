@@ -1,0 +1,112 @@
+<!-- templates/landing.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Maths avec QT</title>
+    <!-- Google Fonts import for fun fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Bubblegum+Sans&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Bubblegum Sans', cursive;
+            background-image: url("{{ url_for('static', filename='bg.png') }}");
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .header {
+            padding: 30px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .title {
+            font-size: 60px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+            font-family: 'Fredoka One', cursive;
+            text-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 30px;
+            font-weight: normal;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .button-container {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+        }
+        
+        .start-button {
+            padding: 15px 30px;
+            font-size: 20px;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(to right, #a18cd1, #fbc2eb);
+            font-family: 'Bubblegum Sans', cursive;
+        }
+        
+        .start-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .cat-left {
+            position: absolute;
+            bottom: 80px;
+            left: 400px;
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+        }
+        
+        .cat-right {
+            position: absolute;
+            bottom: 120px;
+            right: 250px;
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">Les Maths avec QT</div>
+        <div class="subtitle">C'est toujours amusant!</div>
+    </div>
+    
+    <div class="button-container">
+        <button class="start-button" onclick="window.location.href='/info'">C'est parti</button>
+    </div>
+    
+    <div class="cat-left" onclick="playCatSound()"></div>
+    <div class="cat-right" onclick="playCatSound()"></div>
+    
+    <audio id="meow-sound" src="{{ url_for('static', filename='meow.mp3') }}"></audio>
+    
+    <script>
+        function playCatSound() {
+            const audio = document.getElementById('meow-sound');
+            audio.currentTime = 0;
+            audio.play();
+        }
+    </script>
+</body>
+</html>
