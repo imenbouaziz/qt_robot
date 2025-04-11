@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 let scene, camera, renderer, model;
 let mixer;
@@ -30,14 +31,22 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 0);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.45;
 
   // Lumières
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  const ambientLight = new THREE.AmbientLight("#7a7bbe", 0.5);
   scene.add(ambientLight);
-
+/*
   const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.5);
-  scene.add(hemiLight);
-
+  scene.add(hemiLight);*/
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  const environment = new RoomEnvironment();
+  const envMap = pmremGenerator.fromScene(environment).texture;
+  
+  scene.environment = envMap;
+  
   // Charger le modèle
   const loader = new GLTFLoader();
   loader.load(
@@ -69,9 +78,21 @@ function init() {
 
       // Trouver la tête
       model.traverse((child) => {
-        if (child.isMesh && child.name.toLowerCase().includes("head")) {
-          headMesh = child;
-          console.log("🧠 Mesh de tête détecté :", headMesh.name);
+        if (child.isMesh) {
+          child.material.metalness = 0.7;   // 100% métallique
+          child.material.roughness = 0.4; // surface plutôt brillante
+          child.material.envMapIntensity = 1; // pour qu’il capte bien la lumière
+          child.material.envMap = envMap;
+          child.material.needsUpdate = true;
+          if (child.name.toLowerCase().includes("head")){
+            headMesh = child;
+            const textureLoader = new THREE.TextureLoader();
+            const metalnessMap = textureLoader.load("/static/textures/QT-Head-MetallicMap.png", (texture) => {
+              texture.flipY = false;
+              headMesh.material.metalnessMap = metalnessMap;
+            });
+            console.log("🧠 Mesh de tête détecté :", headMesh.name);
+          }
         }
       });
 
