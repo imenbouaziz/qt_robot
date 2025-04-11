@@ -129,9 +129,9 @@ def generate_simple_problem(operation, age="8"):
     max_num = 10  # Par défaut
     
     if age_int >= 10:
-        max_num = 20  # Nombres plus grands pour les enfants plus âgés
+        max_num = 100  # Nombres plus grands pour les enfants plus âgés
     elif age_int >= 7:
-        max_num = 15
+        max_num = 30
     
     # Generate two random numbers between 1 and max_num
     num1 = random.randint(1, max_num)

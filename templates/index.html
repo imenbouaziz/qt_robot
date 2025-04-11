@@ -571,7 +571,8 @@ button:hover {
                 <h1 class="main-title">A toi de jouer</h1>
             </div>
             <canvas id="sceneCanvas"></canvas>
-        </div>
+        </div>￼
+
         
         <div class="right-panel">
             <div class="section">
@@ -739,10 +740,11 @@ button:hover {
         }
 
         // Fonction pour changer l'opération via les cartes
-        function setOperation(operation) {
-            document.getElementById("operation").value = operation;
-            generateProblem();
-        }
+        // Fonction pour changer l'opération via les cartes
+function setOperation(operation) {
+    document.getElementById("operation").value = operation;
+    generateProblem();
+}
 
         // Fonction pour changer l'expression du robot
         function changeFace(expression) {
@@ -778,13 +780,41 @@ button:hover {
     answerInput.style.backgroundColor = "white";
     answerInput.value = "";
     
-    // Le reste de votre code existant pour generateProblem()
+    // Afficher l'état de chargement
+    document.getElementById("problem").innerHTML = "Chargement du problème...";
+    
+    // Récupérer les paramètres
     let operation = document.getElementById("operation").value;
     let problemType = document.getElementById("problemType").value;
-    let num1, num2, result, problemText;
     
-    num1 = Math.floor(Math.random() * 10) + 1;
-    num2 = Math.floor(Math.random() * 10) + 1;
+    // Récupérer l'âge depuis l'URL ou utiliser une valeur par défaut
+    const urlParams = new URLSearchParams(window.location.search);
+    const age = urlParams.get('age') || '8';
+    
+    // Appeler l'API backend pour générer le problème
+    fetch(`/generate_problem?operation=${operation}&type=${problemType}&age=${age}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur réseau');
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById("problem").innerHTML = data.probleme;
+            document.getElementById("correctAnswer").value = data.reponse;
+        })
+        .catch(error => {
+            console.error('Erreur lors de la génération du problème:', error);
+            // Utiliser la génération locale en cas d'erreur
+            generateLocalProblem(operation, problemType);
+        });
+}
+
+// Fonction de secours si l'API échoue
+function generateLocalProblem(operation, problemType) {
+    let num1 = Math.floor(Math.random() * 10) + 1;
+    let num2 = Math.floor(Math.random() * 10) + 1;
+    let result, problemText;
     
     if (operation === 'addition') {
         result = num1 + num2;
@@ -819,7 +849,8 @@ button:hover {
 
 
         // Vérification de la réponse
-        function checkAnswer() {
+        // Vérification de la réponse
+function checkAnswer() {
     let userAnswer = parseInt(document.getElementById("userAnswer").value, 10);
     let correctAnswer = parseInt(document.getElementById("correctAnswer").value, 10);
     let answerInput = document.getElementById("userAnswer");
