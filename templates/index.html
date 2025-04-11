@@ -662,6 +662,9 @@ button:hover {
         let score = 0;
         let voices = [];
         let recognition;
+
+        let attempts = 0;
+        let maxAttempts = 3;
         
         // Récupérer le nom depuis l'URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -765,65 +768,119 @@ button:hover {
 
         // Fonction pour générer un problème mathématique
         function generateProblem() {
-            let operation = document.getElementById("operation").value;
-            let problemType = document.getElementById("problemType").value;
-            let num1, num2, result, problemText;
-            
-            num1 = Math.floor(Math.random() * 10) + 1;
-            num2 = Math.floor(Math.random() * 10) + 1;
-            
-            if (operation === 'addition') {
-                result = num1 + num2;
-                if (problemType === 'simple') {
-                    problemText = `${num1} + ${num2}`;
-                } else {
-                    problemText = `Si tu as ${num1} pommes et que tu en reçois ${num2} de plus, combien en as-tu au total?`;
-                }
-            } else if (operation === 'soustraction') {
-                // S'assurer que le résultat est positif
-                if (num1 < num2) {
-                    [num1, num2] = [num2, num1]; // Échanger les valeurs
-                }
-                result = num1 - num2;
-                if (problemType === 'simple') {
-                    problemText = `${num1} - ${num2}`;
-                } else {
-                    problemText = `Tu as ${num1} bonbons et tu en donnes ${num2} à ton ami. Combien te reste-t-il?`;
-                }
-            } else if (operation === 'multiplication') {
-                result = num1 * num2;
-                if (problemType === 'simple') {
-                    problemText = `${num1} × ${num2}`;
-                } else {
-                    problemText = `Il y a ${num1} rangées de chaises avec ${num2} chaises dans chaque rangée. Combien y a-t-il de chaises au total?`;
-                }
-            }
-            
-            document.getElementById("problem").innerHTML = problemText;
-            document.getElementById("correctAnswer").value = result;
+    // Réinitialiser les tentatives à chaque nouveau problème
+    attempts = 0;
+    
+    // Réinitialiser le style de l'input
+    let answerInput = document.getElementById("userAnswer");
+    answerInput.style.borderColor = "#e6e9f1";
+    answerInput.style.backgroundColor = "white";
+    answerInput.value = "";
+    
+    // Le reste de votre code existant pour generateProblem()
+    let operation = document.getElementById("operation").value;
+    let problemType = document.getElementById("problemType").value;
+    let num1, num2, result, problemText;
+    
+    num1 = Math.floor(Math.random() * 10) + 1;
+    num2 = Math.floor(Math.random() * 10) + 1;
+    
+    if (operation === 'addition') {
+        result = num1 + num2;
+        if (problemType === 'simple') {
+            problemText = `${num1} + ${num2}`;
+        } else {
+            problemText = `Si tu as ${num1} pommes et que tu en reçois ${num2} de plus, combien en as-tu au total?`;
         }
+    } else if (operation === 'soustraction') {
+        // S'assurer que le résultat est positif
+        if (num1 < num2) {
+            [num1, num2] = [num2, num1]; // Échanger les valeurs
+        }
+        result = num1 - num2;
+        if (problemType === 'simple') {
+            problemText = `${num1} - ${num2}`;
+        } else {
+            problemText = `Tu as ${num1} bonbons et tu en donnes ${num2} à ton ami. Combien te reste-t-il?`;
+        }
+    } else if (operation === 'multiplication') {
+        result = num1 * num2;
+        if (problemType === 'simple') {
+            problemText = `${num1} × ${num2}`;
+        } else {
+            problemText = `Il y a ${num1} rangées de chaises avec ${num2} chaises dans chaque rangée. Combien y a-t-il de chaises au total?`;
+        }
+    }
+    
+    document.getElementById("problem").innerHTML = problemText;
+    document.getElementById("correctAnswer").value = result;
+}
+
 
         // Vérification de la réponse
         function checkAnswer() {
-            let userAnswer = parseInt(document.getElementById("userAnswer").value, 10);
-            let correctAnswer = parseInt(document.getElementById("correctAnswer").value, 10);
-            
-            if (userAnswer === correctAnswer) {
-                //changeFace('happy');
-                handleEmoji("🙂");
-                score += 10;
-            } else {
-                //changeFace('sad');
-                handleEmoji("😔");
-                score = Math.max(0, score - 5); // Éviter un score négatif
-            }
+    let userAnswer = parseInt(document.getElementById("userAnswer").value, 10);
+    let correctAnswer = parseInt(document.getElementById("correctAnswer").value, 10);
+    let answerInput = document.getElementById("userAnswer");
+    
+    if (userAnswer === correctAnswer) {
+        // Réinitialiser les tentatives
+        attempts = 0;
+        // Ajouter un style vert pour montrer la réussite
+        answerInput.style.borderColor = "#4CAF50";
+        answerInput.style.backgroundColor = "rgba(76, 175, 80, 0.1)";
+        handleEmoji("🙂");
+        score += 10;
+        document.getElementById("score").innerText = "Score : " + score;
+        document.getElementById("userAnswer").value = "";
         
+        // Passer au problème suivant après 2 secondes
+        setTimeout(function() {
+            // Réinitialiser le style
+            answerInput.style.borderColor = "#e6e9f1";
+            answerInput.style.backgroundColor = "white";
+            generateProblem();
+        }, 2000);
+    } else {
+        attempts++;
+        
+        // Ajouter un style rouge pour montrer l'erreur
+        answerInput.style.borderColor = "#FF5E62";
+        answerInput.style.backgroundColor = "rgba(255, 94, 98, 0.1)";
+        
+        if (attempts >= maxAttempts) {
+            // Après 3 essais, montrer la réponse correcte
+            handleEmoji("😔");
+            answerInput.value = correctAnswer;
+            speak(`La bonne réponse est ${correctAnswer}. Essayons un autre problème.`);
+            
+            // Réinitialiser les tentatives
+            attempts = 0;
+            score = Math.max(0, score - 5);
             document.getElementById("score").innerText = "Score : " + score;
-            document.getElementById("userAnswer").value = "";
+            
+            // Passer au problème suivant après 4 secondes
             setTimeout(function() {
+                // Réinitialiser le style
+                answerInput.style.borderColor = "#e6e9f1";
+                answerInput.style.backgroundColor = "white";
                 generateProblem();
-            }, 2000);
+            }, 4000);
+        } else {
+            // Encore des essais disponibles
+            handleEmoji("😔");
+            const essaisRestants = maxAttempts - attempts;
+            const messageEssai = essaisRestants === 1 ? "dernier essai" : `encore ${essaisRestants} essais`;
+            speak(`Ce n'est pas la bonne réponse. Tu as ${messageEssai}.`);
+            
+            // Ne pas effacer la valeur pour permettre à l'enfant de la corriger
+            
+            // Score diminue légèrement à chaque erreur
+            score = Math.max(0, score - 2);
+            document.getElementById("score").innerText = "Score : " + score;
         }
+    }
+}
 
         // Fonction pour jouer un son en fonction de l'expression du robot
         function playSound(expression) {
