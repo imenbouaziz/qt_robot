@@ -1,0 +1,206 @@
+<!-- templates/info.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information - Les Maths avec QT</title>
+    <!-- Google Fonts import for fun fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Bubblegum+Sans&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Bubblegum Sans', cursive;
+            background: linear-gradient(to right, #a18cd1, #fbc2eb); /* Same gradient as the button */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Animated math symbols background */
+        .math-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .math-symbol {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: bold;
+            animation: float-up 15s linear infinite;
+            z-index: 2;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            width: 80%;
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.6); /* Made more transparent */
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 36px;
+            color: #6a5acd;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #a18cd1;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Bubblegum Sans', cursive;
+            box-sizing: border-box;
+        }
+        
+        .submit-btn {
+            padding: 15px 30px;
+            font-size: 20px;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(to right, #a18cd1, #fbc2eb);
+            font-family: 'Bubblegum Sans', cursive;
+            display: block;
+            margin: 30px auto 0;
+        }
+        
+        .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .robot-image {
+            position: fixed; /* Changed from absolute to fixed */
+            left: 0;
+            bottom: 0;
+            width: 500px; /* Made bigger */
+            height: auto;
+            z-index: 5;
+        }
+        
+        /* Media query for smaller screens */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+            
+            .robot-image {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Math symbols background -->
+    <div class="math-background" id="mathBackground"></div>
+    
+    <div class="container">
+        <h1>Bonjour petit génie!</h1>
+        
+        <form action="/index" method="get">
+            <div class="form-group">
+                <label for="name">Ton prénom:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="age">Ton âge:</label>
+                <input type="number" id="age" name="age" min="1" max="120" required>
+            </div>
+            
+            <button type="submit" class="submit-btn">C'est parti!</button>
+        </form>
+    </div>
+    
+    <img src="{{ url_for('static', filename='robot.png') }}" alt="QT Robot" class="robot-image">
+    
+    <script>
+        // Create floating math symbols
+        document.addEventListener('DOMContentLoaded', function() {
+            const mathBackground = document.getElementById('mathBackground');
+            const mathSymbols = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '+', '-', '×', '÷', '=', '%'];
+            const numSymbols = 50; // Number of symbols to create
+            
+            for (let i = 0; i < numSymbols; i++) {
+                createMathSymbol(mathBackground, mathSymbols);
+            }
+        });
+        
+        function createMathSymbol(container, symbols) {
+            const symbol = document.createElement('div');
+            symbol.className = 'math-symbol';
+            
+            // Random symbol from array
+            const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+            symbol.textContent = randomSymbol;
+            
+            // Random size
+            const size = Math.floor(Math.random() * 30) + 16; // 16px to 46px
+            symbol.style.fontSize = `${size}px`;
+            
+            // Random position
+            const left = Math.random() * 100;
+            symbol.style.left = `${left}%`;
+            
+            // Random animation duration
+            const duration = Math.random() * 20 + 10; // 10s to 30s
+            symbol.style.animationDuration = `${duration}s`;
+            
+            // Random start position within animation
+            const delay = Math.random() * -duration;
+            symbol.style.animationDelay = `${delay}s`;
+            
+            container.appendChild(symbol);
+            
+            // Remove and recreate after animation completes
+            setTimeout(() => {
+                symbol.remove();
+                createMathSymbol(container, symbols);
+            }, (duration + Math.abs(delay)) * 1000);
+        }
+    </script>
+</body>
+</html>
