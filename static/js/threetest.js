@@ -10,10 +10,8 @@ let headMesh = null;
 const qtScale = 2.7;
 
 function init() {
-  // Créer la scène
   scene = new THREE.Scene();
 
-  // Caméra
   camera = new THREE.PerspectiveCamera(
     50,
     window.innerWidth / window.innerHeight,
@@ -21,7 +19,6 @@ function init() {
     1000
   );
 
-  // Rendu
   const canvas = document.getElementById("sceneCanvas");
   renderer = new THREE.WebGLRenderer({
     canvas: canvas,
@@ -31,6 +28,8 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 0);
+
+  //Tonemapping
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.45;
@@ -38,9 +37,8 @@ function init() {
   // Lumières
   const ambientLight = new THREE.AmbientLight("#7a7bbe", 0.5);
   scene.add(ambientLight);
-/*
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.5);
-  scene.add(hemiLight);*/
+
+  //Environemment lumineux
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
   const environment = new RoomEnvironment();
   const envMap = pmremGenerator.fromScene(environment).texture;
@@ -79,8 +77,8 @@ function init() {
       // Trouver la tête
       model.traverse((child) => {
         if (child.isMesh) {
-          child.material.metalness = 0.7;   // 100% métallique
-          child.material.roughness = 0.4; // surface plutôt brillante
+          child.material.metalness = 0.7; 
+          child.material.roughness = 0.4; // 0 brillant - 1 pas brillant
           child.material.envMapIntensity = 1; // pour qu’il capte bien la lumière
           child.material.envMap = envMap;
           child.material.needsUpdate = true;
@@ -97,7 +95,7 @@ function init() {
       });
 
       mixer = new THREE.AnimationMixer(model);
-      mixer._clips = gltf.animations; // 🔁 on garde les clips pour findByName
+      mixer._clips = gltf.animations;
 
       playAnimation("Wave_Baked","HappySmile");
 
@@ -113,12 +111,13 @@ function init() {
 
 let currentAction = null;
 let isInAnimation = false;
+
+
 function playAnimation(name, expressionName = null) {
   if (name != "Idle_Baked" && isInAnimation){
     return;
   }
 
-  // 🎭 Expression liée
   if (expressionName) {
     setExpression(expressionName);
   }
@@ -136,7 +135,6 @@ function playAnimation(name, expressionName = null) {
 
   const newAction = mixer.clipAction(clip);
 
-  // 🌀 Si c'est Idle, on le boucle
   if (name === "Idle_Baked") {
     newAction.setLoop(THREE.LoopRepeat);
     newAction.clampWhenFinished = false;
@@ -153,9 +151,6 @@ function playAnimation(name, expressionName = null) {
   newAction.reset().fadeIn(0.3).play();
   currentAction = newAction;
   
-  
-
-  // 💤 Revenir à Idle après anim SANS re-boucler Idle
   if (name !== "Idle_Baked") {
     mixer.addEventListener("finished", function onFinish() {
       mixer.removeEventListener("finished", onFinish);
@@ -166,9 +161,6 @@ function playAnimation(name, expressionName = null) {
 
   console.log(`🎬 Animation '${name}' lancée avec expression '${expressionName || 'aucune'}'`);
 }
-
-
-
 
 
 // Fonction pour changer l'expression du visage
@@ -216,6 +208,6 @@ window.addEventListener("resize", () => {
 
 init();
 
-// 💡 Rends setExpression accessible globalement
+//Rends setExpression accessible globalement
 window.setExpression = setExpression;
 window.playAnimation = playAnimation;

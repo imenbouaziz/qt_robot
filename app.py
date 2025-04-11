@@ -6,11 +6,15 @@ import json
 import re
 import time
 import random
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 
+load_dotenv()
+
 # set OpenRouter API Key
-API_KEY = config.API_KEY
+API_KEY = os.getenv("api-key")
+print(f"APIKEY = {API_KEY}")
 BASE_URL = "https://openrouter.ai/api/v1"
 
 @app.route('/')
