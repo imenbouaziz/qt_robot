@@ -158,22 +158,22 @@ def generate_simple_problem(operation, age="8"):
             num1 = random.randint(1, 5)
             num2 = random.randint(1, 5)
         
-        problem = f"{num1} × {num2}"
-        answer = num1 * num2
+            problem = f"{num1} × {num2}"
+            answer = num1 * num2
 
         elif age_int >=7:
             num1 = random.randint(1, 10)
             num2 = random.randint(1, 10)
-        
-        problem = f"{num1} × {num2}"
-        answer = num1 * num2
+            
+            problem = f"{num1} × {num2}"
+            answer = num1 * num2
     
     elif age_int >=10:
             num1 = random.randint(1, 12)
             num2 = random.randint(1, 12)
         
-        problem = f"{num1} × {num2}"
-        answer = num1 * num2
+            problem = f"{num1} × {num2}"
+            answer = num1 * num2
     return jsonify({
         "probleme": problem,
         "reponse": str(answer)
